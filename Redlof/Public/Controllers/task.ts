@@ -3,11 +3,12 @@ const Category = require('../../Engine/Databases/category');
 const Task = require('../../Engine/Databases/todo');
 const { apiResponse } = require('../../Engine/Helpers/Api/apiResMessage');
 const { Op } = require("sequelize");
+const { sequelize } = require('../../Engine/Config/sequilize');
 
 
 const fetchTasks = async (req: Request , res: Response)=>{
     try{
-        // Find all the contact lists and return them
+        // Find all the tasks and return them
         let tasks = await Task.findAll({ include: Category }); 
 
         // This will also retrieve soft-deleted records
@@ -24,7 +25,7 @@ const fetchTasks = async (req: Request , res: Response)=>{
 const fetchTasksByCategory = async (req: Request, res: Response) => {
     try {
         let category = req.params.category.trim().toLowerCase();
-        // Find all the contact lists and return them
+        // Find all the tasks and return them
         let tasks = await Task.findAll(
             { 
                 include: {
@@ -37,6 +38,29 @@ const fetchTasksByCategory = async (req: Request, res: Response) => {
         );
 
         apiResponse(res, 200, `Tasks with category ${category}`, tasks);
+    } catch (err) {
+        console.log("Error in fetching tasks", err);
+        apiResponse(res, 500, "Internal server error");
+    }
+}
+
+const fetchTasksByDateRange = async (req: Request, res: Response) => {
+    try {
+        let { start_date, end_date} :any = req.query;
+        let start = new Date(start_date);
+        let end = new Date(end_date);
+
+        // Find all the tasks and return them
+        let tasks = await Task.findAll({
+            where: {
+                due_date: {
+                    [Op.between]: [start, end]
+                }
+            }
+        });
+
+        apiResponse(res, 200, `Tasks between ${start_date} and ${end_date}`, tasks);
+
     } catch (err) {
         console.log("Error in fetching tasks", err);
         apiResponse(res, 500, "Internal server error");
@@ -103,6 +127,7 @@ module.exports = {
     createTask,     
     fetchTasks,  
     fetchTasksByCategory,   
+    fetchTasksByDateRange,
     updateTask,     
     deleteTask,     
 }

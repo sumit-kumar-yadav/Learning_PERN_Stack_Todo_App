@@ -2,6 +2,7 @@ import { Router } from 'express';
 const { 
     fetchTasks, 
     fetchTasksByCategory,
+    fetchTasksByDateRange,
     createTask,
     updateTask,
     deleteTask
@@ -14,6 +15,7 @@ const router = Router();
 // To practice CRUD operation using Sequilize and postgres
 router.get('/get-all-tasks', fetchTasks);
 router.get('/get-tasks-by-category/:category', validateCategoty, fetchTasksByCategory);
+router.get('/get-all-tasks-by-date', fetchTasksByDateRange);
 
 router.post('/create-task', validateCreateTaskData, createTask);
 

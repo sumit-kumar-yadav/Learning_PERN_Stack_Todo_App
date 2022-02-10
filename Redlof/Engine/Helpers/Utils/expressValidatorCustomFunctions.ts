@@ -30,8 +30,7 @@ const isCategoryAlreadyExist: CustomValidator = async (value) => {
 const isValidDate: CustomValidator =async (value) => {
     let currentDate = new Date();
     let dueDate =  new Date(value);
-    // console.log("Checking the comaprison", value,  currentDate.getTime(), new Date(value).getTime());
-    if(dueDate.getTime() < currentDate.getTime()){
+    if(dueDate < currentDate){
         return Promise.reject(`Due date can't be less than today's date`);
     }
 }
