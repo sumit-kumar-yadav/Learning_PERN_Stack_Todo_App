@@ -3,12 +3,13 @@ const expressLayouts = require('express-ejs-layouts');
 var logger = require('morgan');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+require('dotenv').config();
 
 const app: Application = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000;
 
 // DB connection with PostgreSQL using Sequilize
-// const { sequelize } = require('./config/sequilize');
+const { sequelize } = require('./Engine/Config/sequilize');
 
 app.use(logger('dev'));
 // Express parser to parse the form data into js object
@@ -29,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static('./assets'));
 
 // Root router
-// app.use('/', require('./routes'));
+app.use('/public', require('./Public/Routes'));
 
 app.listen(port, () => {
     console.log(`Server is running on port : ${port}`);
