@@ -21,6 +21,27 @@ const fetchTasks = async (req: Request , res: Response)=>{
     }
 }
 
+const fetchTasksByCategory = async (req: Request, res: Response) => {
+    try {
+        let category = req.params.category.trim().toLowerCase();
+        // Find all the contact lists and return them
+        let tasks = await Task.findAll(
+            { 
+                include: {
+                    model: Category,
+                    where: {
+                        type: category
+                    }
+                }, 
+            }
+        );
+
+        apiResponse(res, 200, `Tasks with category ${category}`, tasks);
+    } catch (err) {
+        console.log("Error in fetching tasks", err);
+        apiResponse(res, 500, "Internal server error");
+    }
+}
 
 const createTask = async (req: Request, res: Response) => {
     try {
@@ -80,7 +101,8 @@ const deleteTask = async (req: Request, res: Response) => {
 
 module.exports = {
     createTask,     
-    fetchTasks,     
+    fetchTasks,  
+    fetchTasksByCategory,   
     updateTask,     
     deleteTask,     
 }

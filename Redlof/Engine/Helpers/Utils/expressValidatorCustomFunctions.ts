@@ -19,7 +19,7 @@ const isValidTaskId: CustomValidator = async (value) => {
 }
 
 // Function to check if category already exists
-const isVaidCategory: CustomValidator = async (value) => {
+const isCategoryAlreadyExist: CustomValidator = async (value) => {
     let category = await Category.findOne({ where: { type: value.toLowerCase() } });
     // If this category is already present, then return with an error
     if(category) {
@@ -36,9 +36,21 @@ const isValidDate: CustomValidator =async (value) => {
     }
 }
 
+const isValidCategory: CustomValidator = async (value)=>{
+    let category = await Category.findOne({
+        where: {
+            type: value.trim().toLowerCase()
+        }
+    });
+    if(!category){
+        return Promise.reject(`This category doesn't exist`);
+    }
+}
+
 module.exports = {
     isValidCategoryId,
     isValidTaskId,
-    isVaidCategory,
+    isCategoryAlreadyExist,
+    isValidCategory,
     isValidDate
 }
