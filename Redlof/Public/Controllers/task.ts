@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 const Category = require('../../Engine/Databases/category');
 const Task = require('../../Engine/Databases/todo');
+const { apiResponse } = require('../../Engine/Helpers/Api/apiResMessage');
 const { Op } = require("sequelize");
 
 
@@ -12,16 +13,11 @@ const fetchTasks = async (req: Request , res: Response)=>{
         // This will also retrieve soft-deleted records
         // let tasks = await Task.findAll({ include: Category, paranoid: false });
 
-        return res.status(200).json({
-            message: "All tasks",
-            data: tasks
-        });
+        apiResponse(res, 200, "All tasks", tasks);
 
     }catch(err){
         console.log("Error in fetching tasks", err);
-        return res.status(500).json({
-            message: "Internal server error"
-        });
+        apiResponse(res, 500, "Internal server error");
     }
 }
 
@@ -38,16 +34,11 @@ const createTask = async (req: Request, res: Response) => {
         });
         
         // Return with the created task
-        return res.status(200).json({
-            message: "New task created",
-            data: task.toJSON()
-        });
+        apiResponse(res, 200, "New task created", task.toJSON());
 
     } catch (err) {
         console.log("Error in creating a contact", err);
-        return res.status(500).json({
-            message: "Internal server error"
-        });
+        apiResponse(res, 500, "Internal server error");
     }
 }
 
@@ -61,16 +52,11 @@ const updateTask = async (req: Request, res: Response) => {
             }
         });
 
-        return res.status(200).json({
-            message: "Task is updated",
-            data: true
-        });
+        apiResponse(res, 200, "Task is updated", true);
 
     } catch (error) {
         console.log("Error in updating the contact", error);
-        return res.status(500).json({
-            message: "Internal server error"
-        });
+        apiResponse(res, 500, "Internal server error");
     }
 }
 
@@ -79,15 +65,11 @@ const deleteTask = async (req: Request, res: Response) => {
         let task = await Task.findByPk(req.params.id);
         if(task) await task.destroy();
 
-        return res.status(200).json({
-            message: "Task is deleted",
-            data: task
-        });
+        apiResponse(res, 200, "Task is deleted", task);
+
     } catch (error) {
         console.log("Error in creating a task", error);
-        return res.status(500).json({
-            message: "Internal server error"
-        });
+        apiResponse(res, 500, "Internal server error");
     }
 }
 

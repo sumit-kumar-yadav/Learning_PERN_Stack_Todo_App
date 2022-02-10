@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 const Category = require('../../Engine/Databases/category');
 const { Op } = require("sequelize");
+const { apiResponse } = require('../../Engine/Helpers/Api/apiResMessage');
 
 
 const fetchCategories = async (req: Request, res: Response) => {
@@ -8,15 +9,11 @@ const fetchCategories = async (req: Request, res: Response) => {
         // Find all the contact lists and return them
         let categories = await Category.findAll();
 
-        return res.status(200).json({
-            message: "All categories",
-            data: categories
-        });
+        apiResponse(res, 200, "All categories", categories);
+        
     } catch (err) {
         console.log("Error in fetching categories", err);
-        return res.status(500).json({
-            message: "Internal server error"
-        });
+        apiResponse(res, 500, "Internal server error");
     }
 }
 
@@ -29,15 +26,11 @@ const createCategory =async (req: Request, res: Response) => {
             type: req.body.type.toLowerCase()
         });
         
-        return res.status(200).json({
-            message: "New category created",
-            data: category.toJSON()
-        });
+        apiResponse(res, 200, "New category created", category.toJSON());
+        
     } catch (err) {
         console.log("Error in creating category", err);
-        return res.status(500).json({
-            message: "Internal server error"
-        });
+        apiResponse(res, 500, "Internal server error");
     }
 }
 

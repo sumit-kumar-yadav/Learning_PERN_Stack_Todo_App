@@ -19,7 +19,7 @@
 
         // Define the relationship  (one to many)
         Category.hasMany(Todo);  // Todo model will have foreign key i.e, categoryId with this syntax
-        Todo.belongsTo(Category, { foreignKey: 'category_id' });
+        Todo.belongsTo(Category);
         
       
       module.exports = Todo;
