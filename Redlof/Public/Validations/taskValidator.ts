@@ -9,7 +9,7 @@ module.exports.validateCreateTaskData = [
     check('description')
         .isLength({ min: 7, max: 50 }).withMessage('must be between 4 to 50 char long')
         .trim().notEmpty().withMessage('Description should not be empty'),
-    check('category_id')
+    check('CategoryId')
         .custom(isValidCategoryId)
         .trim().notEmpty().withMessage('Must provide a vald id of category'),
     checkIfReqIsValid
@@ -23,7 +23,7 @@ module.exports.validateUpdateTaskData = [
     check('description')
         .isLength({ min: 7, max: 50 }).withMessage('must be between 4 to 50 char long')
         .trim().notEmpty().withMessage('Description should not be empty'),
-    check('category_id')
+    check('CategoryId')
         .custom(isValidCategoryId)
         .trim().notEmpty().withMessage('Must provide a vald id of category'),
     checkIfReqIsValid

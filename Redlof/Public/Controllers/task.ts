@@ -30,7 +30,7 @@ const createTask = async (req: Request, res: Response) => {
         let task = await Task.create({
             title: req.body.title,
             description: req.body.description,
-            category_id: req.body.category_id
+            CategoryId: req.body.CategoryId
         });
         
         // Return with the created task
@@ -62,10 +62,14 @@ const updateTask = async (req: Request, res: Response) => {
 
 const deleteTask = async (req: Request, res: Response) => {
     try {
+        let deleted = false;
         let task = await Task.findByPk(req.params.id);
-        if(task) await task.destroy();
+        if(task) {
+            await task.destroy();
+            deleted = true;
+        }
 
-        apiResponse(res, 200, "Task is deleted", task);
+        apiResponse(res, 200, "Task is deleted", deleted);
 
     } catch (error) {
         console.log("Error in creating a task", error);
