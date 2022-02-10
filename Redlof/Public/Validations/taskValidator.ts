@@ -1,6 +1,6 @@
 import { body, check, param  } from 'express-validator';
 const { checkIfReqIsValid } = require('../../Engine/Helpers/Middleware/expressValidators');
-const { isValidCategoryId, isValidTaskId } = require('../../Engine/Helpers/Utils/expressValidatorCustomFunctions');
+const { isValidCategoryId, isValidTaskId, isValidDate } = require('../../Engine/Helpers/Utils/expressValidatorCustomFunctions');
 
 module.exports.validateCreateTaskData = [
     check('title')
@@ -9,6 +9,9 @@ module.exports.validateCreateTaskData = [
     check('description')
         .isLength({ min: 7, max: 50 }).withMessage('must be between 4 to 50 char long')
         .trim().notEmpty().withMessage('Description should not be empty'),
+    check('due_date')
+        .custom(isValidDate)
+        .trim().isDate().withMessage('Must be a date'),
     check('CategoryId')
         .custom(isValidCategoryId)
         .trim().notEmpty().withMessage('Must provide a vald id of category'),

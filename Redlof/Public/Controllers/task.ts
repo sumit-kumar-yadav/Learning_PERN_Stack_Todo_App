@@ -30,6 +30,7 @@ const createTask = async (req: Request, res: Response) => {
         let task = await Task.create({
             title: req.body.title,
             description: req.body.description,
+            due_date: req.body.due_date,
             CategoryId: req.body.CategoryId
         });
         
@@ -37,7 +38,7 @@ const createTask = async (req: Request, res: Response) => {
         apiResponse(res, 200, "New task created", task.toJSON());
 
     } catch (err) {
-        console.log("Error in creating a contact", err);
+        console.log("Error in creating a task", err);
         apiResponse(res, 500, "Internal server error");
     }
 }

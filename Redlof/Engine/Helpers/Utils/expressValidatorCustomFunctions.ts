@@ -27,8 +27,18 @@ const isVaidCategory: CustomValidator = async (value) => {
     }
 }
 
+const isValidDate: CustomValidator =async (value) => {
+    let currentDate = new Date();
+    let dueDate =  new Date(value);
+    // console.log("Checking the comaprison", value,  currentDate.getTime(), new Date(value).getTime());
+    if(dueDate.getTime() < currentDate.getTime()){
+        return Promise.reject(`Due date can't be less than today's date`);
+    }
+}
+
 module.exports = {
     isValidCategoryId,
     isValidTaskId,
-    isVaidCategory
+    isVaidCategory,
+    isValidDate
 }

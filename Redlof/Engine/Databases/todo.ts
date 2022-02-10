@@ -11,6 +11,11 @@
           description: {
             type: DataTypes.STRING,
             allowNull: false
+          },
+          due_date: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW
           }
         }, {
           // options
