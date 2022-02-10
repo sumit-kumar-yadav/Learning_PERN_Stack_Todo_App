@@ -1,66 +1,38 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 const Category = require('../../Engine/Databases/category');
 const Task = require('../../Engine/Databases/todo');
 const { apiResponse } = require('../../Engine/Helpers/Api/apiResMessage');
 const { Op } = require("sequelize");
-const { sequelize } = require('../../Engine/Config/sequilize');
 
 
-const fetchTasks = async (req: Request , res: Response)=>{
-    try{
-        // Find all the tasks and return them
-        let tasks = await Task.findAll({ include: Category }); 
-
-        // This will also retrieve soft-deleted records
-        // let tasks = await Task.findAll({ include: Category, paranoid: false });
-
-        apiResponse(res, 200, "All tasks", tasks);
-
-    }catch(err){
-        console.log("Error in fetching tasks", err);
-        apiResponse(res, 500, "Internal server error");
-    }
-}
-
-const fetchTasksByCategory = async (req: Request, res: Response) => {
+const filterTasks =async (req: Request, res: Request) => {
     try {
-        let category = req.params.category.trim().toLowerCase();
-        // Find all the tasks and return them
-        let tasks = await Task.findAll(
-            { 
-                include: {
-                    model: Category,
-                    where: {
-                        type: category
-                    }
-                }, 
+        // Get the submitted data from the query (if any)
+        let { start_date, end_date, category}: any = req.query;
+
+        let where:any = {};  // Where clause
+        let include: any = {      // Associated model to be included
+            model: Category
+        }
+
+        // If start and end date are also chosen
+        if(start_date && end_date){
+            // Modify where clause
+            where["due_date"] = { [Op.between]: [new Date(start_date), new Date(end_date)] }
+        }
+
+        // If category is also chosen
+        if(category){
+            // Modify include object
+            include["where"] = {
+                type: category.trim().toLowerCase()
             }
-        );
-
-        apiResponse(res, 200, `Tasks with category ${category}`, tasks);
-    } catch (err) {
-        console.log("Error in fetching tasks", err);
-        apiResponse(res, 500, "Internal server error");
-    }
-}
-
-const fetchTasksByDateRange = async (req: Request, res: Response) => {
-    try {
-        let { start_date, end_date} :any = req.query;
-        let start = new Date(start_date);
-        let end = new Date(end_date);
+        }
 
         // Find all the tasks and return them
-        let tasks = await Task.findAll({
-            where: {
-                due_date: {
-                    [Op.between]: [start, end]
-                }
-            }
-        });
+        let tasks = await Task.findAll( {where, include} );
 
-        apiResponse(res, 200, `Tasks between ${start_date} and ${end_date}`, tasks);
-
+        apiResponse(res, 200, `Tasks fetched`, tasks);
     } catch (err) {
         console.log("Error in fetching tasks", err);
         apiResponse(res, 500, "Internal server error");
@@ -125,9 +97,7 @@ const deleteTask = async (req: Request, res: Response) => {
 
 module.exports = {
     createTask,     
-    fetchTasks,  
-    fetchTasksByCategory,   
-    fetchTasksByDateRange,
+    filterTasks,
     updateTask,     
     deleteTask,     
 }

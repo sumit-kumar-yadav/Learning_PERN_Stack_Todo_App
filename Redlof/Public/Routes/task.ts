@@ -1,21 +1,17 @@
 import { Router } from 'express';
 const { 
-    fetchTasks, 
-    fetchTasksByCategory,
-    fetchTasksByDateRange,
+    filterTasks,
     createTask,
     updateTask,
     deleteTask
 } = require('../Controllers/task');
-const { validateCreateTaskData, validateUpdateTaskData, validateDeleteTask } = require('../Validations/taskValidator');
+const { validateCreateTaskData, validateUpdateTaskData, validateDeleteTask, validateDates } = require('../Validations/taskValidator');
 const { validateCategoty } = require('../Validations/categoryValidator');
 
 const router = Router();
 
 // To practice CRUD operation using Sequilize and postgres
-router.get('/get-all-tasks', fetchTasks);
-router.get('/get-tasks-by-category/:category', validateCategoty, fetchTasksByCategory);
-router.get('/get-all-tasks-by-date', fetchTasksByDateRange);
+router.get('/get-filtered-tasks', validateCategoty, validateDates, filterTasks);
 
 router.post('/create-task', validateCreateTaskData, createTask);
 

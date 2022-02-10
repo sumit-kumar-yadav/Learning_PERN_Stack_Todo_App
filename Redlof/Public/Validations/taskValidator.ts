@@ -36,3 +36,13 @@ module.exports.validateDeleteTask = [
     param('id').custom(isValidTaskId),
     checkIfReqIsValid
 ]
+
+module.exports.validateDates = [
+    check('start_date')
+        .optional({ checkFalsy: true })
+        .trim().isDate().withMessage('Must be a date'),
+    check('end_date')
+        .optional({ checkFalsy: true })
+        .trim().isDate().withMessage('Must be a date'),
+    checkIfReqIsValid
+]

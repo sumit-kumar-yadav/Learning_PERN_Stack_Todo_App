@@ -12,6 +12,7 @@ module.exports.validateCreateCategoryData = [
 
 module.exports.validateCategoty = [
     check('category')
+        .optional({ checkFalsy: true })
         .trim()
         .custom(isValidCategory),
     checkIfReqIsValid
