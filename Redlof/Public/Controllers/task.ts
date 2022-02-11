@@ -3,34 +3,37 @@ const Category = require('../../Engine/Databases/category');
 const Task = require('../../Engine/Databases/todo');
 const { apiResponse } = require('../../Engine/Helpers/Api/apiResMessage');
 const { Op } = require("sequelize");
+const { convetToCsv } = require('../../Engine/Helpers/Utils/json2csv');
 
 
-const filterTasks =async (req: Request, res: Request) => {
+const filterTasks =async (req: Request, res: any) => {
     try {
         // Get the submitted data from the query (if any)
         let { start_date, end_date, id}: any = req.query;
 
-        let where:any = {};  // Where clause
-        let include: any = {      // Associated model to be included
-            model: Category
+        let queryObj: any = {
+            where: {},
+            include: {
+                model: Category
+            },
+            raw: true,
+            nest: true
         }
 
-        // If start and end date are also chosen
+        // If start and end date are also chosen, then Modify where clause
         if(start_date && end_date){
-            // Modify where clause
-            where["due_date"] = { [Op.between]: [new Date(start_date), new Date(end_date)] }
+            queryObj.where["due_date"] = { [Op.between]: [new Date(start_date), new Date(end_date)] }
         }
 
-        // If category is also chosen
-        if(id){
-            // Modify include object
-            include["where"] = {id}
-        }
+        // If category is also chosen, then Modify include object
+        if(id) queryObj.include["where"] = {id}
 
         // Find all the tasks and return them
-        let tasks = await Task.findAll( {where, include} );
+        let tasks = await Task.findAll( queryObj );
+        
+        // Convert json data to csv and send it to client
+        convetToCsv(tasks, res);
 
-        apiResponse(res, 200, `Tasks fetched`, tasks);
     } catch (err) {
         console.log("Error in fetching tasks", err);
         apiResponse(res, 500, "Internal server error");
