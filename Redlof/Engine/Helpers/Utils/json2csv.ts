@@ -45,9 +45,10 @@ module.exports.convetToCsv = (tasks: any, res: any) => {
     const csv = json2csvParser.parse(tasks);
 
     // Set the header
-    res.writeHead(200, {  // req.headers['Content-Type']= 'text/csv';
-        'Content-Type': 'text/csv'
-    });
+    res.header('Content-Type', 'text/csv').attachment("TodoList.csv");
+    // res.writeHead(200, {  
+    //     'Content-Type': 'text/csv',
+    // });
 
     res.end(csv);
 }
