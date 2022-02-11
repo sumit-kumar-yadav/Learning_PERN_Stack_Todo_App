@@ -35,21 +35,10 @@ const isValidDate: CustomValidator =async (value) => {
     }
 }
 
-const isValidCategory: CustomValidator = async (value)=>{
-    let category = await Category.findOne({
-        where: {
-            type: value.trim().toLowerCase()
-        }
-    });
-    if(!category){
-        return Promise.reject(`This category doesn't exist`);
-    }
-}
 
 module.exports = {
     isValidCategoryId,
     isValidTaskId,
     isCategoryAlreadyExist,
-    isValidCategory,
     isValidDate
 }

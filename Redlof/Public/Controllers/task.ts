@@ -8,7 +8,7 @@ const { Op } = require("sequelize");
 const filterTasks =async (req: Request, res: Request) => {
     try {
         // Get the submitted data from the query (if any)
-        let { start_date, end_date, category}: any = req.query;
+        let { start_date, end_date, id}: any = req.query;
 
         let where:any = {};  // Where clause
         let include: any = {      // Associated model to be included
@@ -22,11 +22,9 @@ const filterTasks =async (req: Request, res: Request) => {
         }
 
         // If category is also chosen
-        if(category){
+        if(id){
             // Modify include object
-            include["where"] = {
-                type: category.trim().toLowerCase()
-            }
+            include["where"] = {id}
         }
 
         // Find all the tasks and return them

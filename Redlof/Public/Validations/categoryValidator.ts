@@ -1,6 +1,6 @@
 import { body, check  } from 'express-validator';
 const { checkIfReqIsValid } = require('../../Engine/Helpers/Middleware/expressValidators');
-const { isCategoryAlreadyExist, isValidCategory } = require('../../Engine/Helpers/Utils/expressValidatorCustomFunctions');
+const { isCategoryAlreadyExist, isValidCategoryId } = require('../../Engine/Helpers/Utils/expressValidatorCustomFunctions');
 
 module.exports.validateCreateCategoryData = [
     check('type')
@@ -10,10 +10,9 @@ module.exports.validateCreateCategoryData = [
     checkIfReqIsValid
 ]
 
-module.exports.validateCategoty = [
-    check('category')
+module.exports.validateCategoryId = [
+    check('id')
         .optional({ checkFalsy: true })
-        .trim()
-        .custom(isValidCategory),
+        .custom(isValidCategoryId),
     checkIfReqIsValid
 ]
