@@ -34,6 +34,8 @@ const filterTasks =async (req: Request, res: any) => {
         // Convert json data to csv and send it to client
         convetToCsv(tasks, res);
 
+        // apiResponse(res, 200, "Tasks",tasks);
+
     } catch (err) {
         console.log("Error in fetching tasks", err);
         apiResponse(res, 500, "Internal server error");

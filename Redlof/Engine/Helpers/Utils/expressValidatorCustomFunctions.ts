@@ -1,6 +1,7 @@
 import { CustomValidator  } from 'express-validator';
 const Category = require('../../Databases/category');
 const Task = require('../../Databases/todo');
+const User = require('../../Databases/user');
 
 
 // Function to check if category id is valid or not
@@ -35,10 +36,17 @@ const isValidDate: CustomValidator =async (value) => {
     }
 }
 
+const isAlreadySignedUp: CustomValidator =async (email) => {
+    let user = await User.findOne({ where: { email } });
+    if(user){
+        return Promise.reject(`This user is already present`);
+    }
+}
 
 module.exports = {
     isValidCategoryId,
     isValidTaskId,
     isCategoryAlreadyExist,
-    isValidDate
+    isValidDate,
+    isAlreadySignedUp
 }
