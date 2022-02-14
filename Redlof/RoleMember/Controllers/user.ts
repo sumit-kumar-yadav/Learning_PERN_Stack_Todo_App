@@ -33,7 +33,6 @@ const signInController = async (req: Request, res: Response) => {
         let user = await User.findOne({ where: { email } });
         if(user && user.password == password){
             // create a jwt authentication token and send it to the client
-            console.log("Checking", process.env.JWT_SECRET);
             let token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {expiresIn:  '1h'});
 
             apiResponse(res, 200, "Signed in successfully. Here is your token", token);

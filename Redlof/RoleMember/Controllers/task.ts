@@ -6,13 +6,14 @@ const { Op } = require("sequelize");
 const { convetToCsv } = require('../../Engine/Helpers/Utils/json2csv');
 
 
-const filterTasks =async (req: Request, res: any) => {
+const filterTasks =async (req: any, res: any) => {
     try {
         // Get the submitted data from the query (if any)
         let { start_date, end_date, id}: any = req.query;
+        let userId = req.user.id;  // Extracted from jwt in middleware
 
         let queryObj: any = {
-            where: {},
+            where: { UserId: userId},
             include: {
                 model: Category
             },
@@ -32,9 +33,9 @@ const filterTasks =async (req: Request, res: any) => {
         let tasks = await Task.findAll( queryObj );
         
         // Convert json data to csv and send it to client
-        convetToCsv(tasks, res);
+        // convetToCsv(tasks, res);
 
-        // apiResponse(res, 200, "Tasks",tasks);
+        apiResponse(res, 200, "Tasks", tasks);
 
     } catch (err) {
         console.log("Error in fetching tasks", err);
@@ -42,16 +43,17 @@ const filterTasks =async (req: Request, res: any) => {
     }
 }
 
-const createTask = async (req: Request, res: Response) => {
+const createTask = async (req: any, res: Response) => {
     try {
-        // console.log("Inside the body", req.body);
+        let userId = req.user.id;  // Extracted from jwt in middleware
 
         // Create a contact
         let task = await Task.create({
             title: req.body.title,
             description: req.body.description,
             due_date: req.body.due_date,
-            CategoryId: req.body.CategoryId
+            CategoryId: req.body.CategoryId,
+            UserId: userId
         });
         
         // Return with the created task
@@ -64,16 +66,20 @@ const createTask = async (req: Request, res: Response) => {
 }
 
 
-const updateTask = async (req: Request, res: Response) => {
+const updateTask = async (req: any, res: Response) => {
     try {
-        //  console.log("Inside the body of updateTask", req.body);
-        await Task.update(req.body, {
+        let userId = req.user.id;  // Extracted from jwt in middleware
+
+        let task = await Task.update(req.body, {
             where: {
-              id: req.params.id
+                [Op.and]: {
+                    id: req.params.id,  // id = Task id
+                    UserId: userId
+                }
             }
         });
 
-        apiResponse(res, 200, "Task is updated", true);
+        apiResponse(res, 200, "Task is updated", task);
 
     } catch (error) {
         console.log("Error in updating the contact", error);
@@ -81,16 +87,18 @@ const updateTask = async (req: Request, res: Response) => {
     }
 }
 
-const deleteTask = async (req: Request, res: Response) => {
+const deleteTask = async (req: any, res: Response) => {
     try {
+        let userId = req.user.id;  // Extracted from jwt in middleware
+
         let deleted = false;
         let task = await Task.findByPk(req.params.id);
-        if(task) {
+        if(task && task.UserId == userId) {
             await task.destroy();
             deleted = true;
         }
 
-        apiResponse(res, 200, "Task is deleted", deleted);
+        apiResponse(res, 200, "Task deleted", deleted);
 
     } catch (error) {
         console.log("Error in creating a task", error);

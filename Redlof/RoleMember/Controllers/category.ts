@@ -19,8 +19,6 @@ const fetchCategories = async (req: Request, res: Response) => {
 
 const createCategory =async (req: Request, res: Response) => {
     try {
-        // console.log("Inside the createCategory", req.body);
-
         // Create a contact
         let category = await Category.create({
             type: req.body.type.toLowerCase()

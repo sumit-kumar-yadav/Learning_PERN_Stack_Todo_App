@@ -21,12 +21,15 @@ module.exports.validateCreateTaskData = [
 module.exports.validateUpdateTaskData = [
     param('id').custom(isValidTaskId),
     check('title')
+        .optional({checkFalsy: true})
         .isLength({ min: 4, max: 25 }).withMessage('must be between 4 to 15 char long')
         .trim().notEmpty().withMessage('Title should not be empty'),
     check('description')
+        .optional({checkFalsy: true})
         .isLength({ min: 7, max: 50 }).withMessage('must be between 4 to 50 char long')
         .trim().notEmpty().withMessage('Description should not be empty'),
     check('CategoryId')
+        .optional({checkFalsy: true})
         .custom(isValidCategoryId)
         .trim().notEmpty().withMessage('Must provide a vald id of category'),
     checkIfReqIsValid
