@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-const { apiResponse } = require('../Api/apiResMessage');
 const jwt = require('jsonwebtoken');
 
+const { apiResponse } = require('../Api/apiResMessage');
+const User = require('../../Databases/user');
 
-module.exports.extractJWTtoken = (req: any, res: Response, next: NextFunction) => {
+
+module.exports.extractJWTtoken = async (req: any, res: Response, next: NextFunction) => {
     // Get auth header value
     const bearerHeader = req.headers['authorization'];
     // Check if bearerHeader is undefined
@@ -14,11 +16,18 @@ module.exports.extractJWTtoken = (req: any, res: Response, next: NextFunction) =
         let bearerToken = bearer[1];
         if(bearerToken){
             let decoded = jwt.verify(bearerToken, process.env.JWT_SECRET);
-            // console.log("This is the decoded data extracted: ", decoded);
-
-            // Set user object in the req to use it in controller
-            req.user = decoded;
-            next();
+            // Check if user exists in db or not
+            if(decoded){
+                let user = await User.findByPk(decoded.id);
+                if(user){
+                    // Set user object in the req to use it in controller
+                    req.user = user;
+                    next();
+                }else
+                    apiResponse(res, 400, "Valid token not found in header");
+            }else{
+                apiResponse(res, 400, "Valid token not found in header");
+            }     
         }else{
             apiResponse(res, 400, "Valid token not found in header");
         }
